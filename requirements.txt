@@ -2,3 +2,4 @@ cryptography
 jira
 oauthlib==0.7.2
 pycrypto
+python-dateutil

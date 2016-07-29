@@ -3,6 +3,7 @@
 import json
 import sys
 
+from dateutil.parser import parse
 from jira.client import JIRA, GreenHopperResource
 
 
@@ -33,7 +34,9 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'sprints':
         board_id = int(sys.argv[2])
         for sprint in jira.sprints(board_id, extended=True):
-            print('{} {} {}'.format(sprint.startDate, sprint.endDate, sprint.name))
+            print('{:%Y-%m-%d/%H:%M} -> {:%Y-%m-%d/%H:%M} {}'.format(parse(sprint.startDate),
+                                                                     parse(sprint.endDate),
+                                                                     sprint.name))
             completed = gh.completed_issues(board_id, sprint.id)
             if completed:
                 print('  Completed:')
