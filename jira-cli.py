@@ -22,6 +22,7 @@ if __name__ == '__main__':
                 key_cert=read('private_key.pem'))
 
     jira = JIRA(options=options, oauth=auth)
+    options['agile_rest_path'] = GreenHopperResource.GREENHOPPER_REST_PATH
     gh = JIRA(options=options, oauth=auth)
 
     if sys.argv[1] == 'boards':
