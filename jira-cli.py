@@ -2,6 +2,7 @@
 
 import json
 import sys
+import unicodedata
 
 from dateutil.parser import parse
 from jira.client import JIRA, GreenHopperResource
@@ -10,6 +11,10 @@ from jira.client import JIRA, GreenHopperResource
 def read(file_path):
     with open(file_path) as f:
         return f.read()
+
+
+def normalize(u):
+    return unicodedata.normalize('NFKD', u).encode('ascii', 'ignore')
 
 
 if __name__ == '__main__':
@@ -38,10 +43,10 @@ if __name__ == '__main__':
             if completed:
                 print('  Completed:')
                 for issue in completed:
-                    print('   * {:5} {:10} {}'.format(issue.key, issue.statusName, issue.summary))
+                    print('   * {:6} {:10} {}'.format(issue.key, issue.statusName, normalize(issue.summary)))
             incomplete = gh.incompleted_issues(board_id, sprint.id)
             if incomplete:
                 print('  Incomplete:')
                 for issue in incomplete:
-                    print('   * {:5} {:10} {}'.format(issue.key, issue.statusName, issue.summary))
+                    print('   * {:6} {:10} {}'.format(issue.key, issue.statusName, normalize(issue.summary)))
             print('')
