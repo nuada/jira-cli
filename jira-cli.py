@@ -14,19 +14,15 @@ def read(file_path):
 
 if __name__ == '__main__':
     config = json.load(open('config.json'))
-    jira = JIRA(options=dict(server=config['server'],
-                             agile_rest_path=GreenHopperResource.AGILE_BASE_REST_PATH),
-                oauth=dict(access_token=config['access_token'],
-                           access_token_secret=config['access_token_secret'],
-                           consumer_key=config['consumer_key'],
-                           key_cert=read('private_key.pem')))
+    options = dict(server=config['server'],
+                   agile_rest_path=GreenHopperResource.AGILE_BASE_REST_PATH)
+    auth = dict(access_token=config['access_token'],
+                access_token_secret=config['access_token_secret'],
+                consumer_key=config['consumer_key'],
+                key_cert=read('private_key.pem'))
 
-    gh = JIRA(options=dict(server=config['server'],
-                           agile_rest_path=GreenHopperResource.GREENHOPPER_REST_PATH),
-              oauth=dict(access_token=config['access_token'],
-                         access_token_secret=config['access_token_secret'],
-                         consumer_key=config['consumer_key'],
-                         key_cert=read('private_key.pem')))
+    jira = JIRA(options=options, oauth=auth)
+    gh = JIRA(options=options, oauth=auth)
 
     if sys.argv[1] == 'boards':
         for board in jira.boards():
