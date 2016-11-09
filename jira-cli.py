@@ -36,9 +36,11 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'sprints':
         board_id = int(sys.argv[2])
         for sprint in jira.sprints(board_id, extended=True):
-            print('{:%Y-%m-%d/%H:%M} -> {:%Y-%m-%d/%H:%M} {}'.format(parse(sprint.startDate),
-                                                                     parse(sprint.endDate),
-                                                                     sprint.name))
+            dates = ''
+            if sprint.state != 'future':
+                dates = '{:%Y-%m-%d/%H:%M} -> {:%Y-%m-%d/%H:%M}'.format(parse(sprint.startDate),
+                                                                           parse(sprint.endDate))
+            print('{} {:36} {}'.format(sprint.state, dates, sprint.name))
             completed = gh.completed_issues(board_id, sprint.id)
             if completed:
                 print('  Completed:')
