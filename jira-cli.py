@@ -5,7 +5,7 @@ import sys
 import unicodedata
 
 from dateutil.parser import parse
-from jira.client import JIRA, GreenHopperResource
+from jira.client import JIRA
 
 
 def read(file_path):
@@ -19,16 +19,12 @@ def normalize(u):
 
 if __name__ == '__main__':
     config = json.load(open('config.json'))
-    options = dict(server=config['server'],
-                   agile_rest_path=GreenHopperResource.AGILE_BASE_REST_PATH)
+    options = dict(server=config['server'])
     auth = dict(access_token=config['access_token'],
                 access_token_secret=config['access_token_secret'],
                 consumer_key=config['consumer_key'],
                 key_cert=read('private_key.pem'))
-
     jira = JIRA(options=options, oauth=auth)
-    options['agile_rest_path'] = GreenHopperResource.GREENHOPPER_REST_PATH
-    gh = JIRA(options=options, oauth=auth)
 
     if sys.argv[1] == 'boards':
         for board in jira.boards():
@@ -41,14 +37,6 @@ if __name__ == '__main__':
                 dates = '{:%Y-%m-%d/%H:%M} -> {:%Y-%m-%d/%H:%M}'.format(parse(sprint.startDate),
                                                                            parse(sprint.endDate))
             print('{} {:36} {}'.format(sprint.state, dates, sprint.name))
-            completed = gh.completed_issues(board_id, sprint.id)
-            if completed:
-                print('  Completed:')
-                for issue in completed:
-                    print('   * {:6} {:10} {}'.format(issue.key, issue.statusName, normalize(issue.summary)))
-            incomplete = gh.incompleted_issues(board_id, sprint.id)
-            if incomplete:
-                print('  Incomplete:')
-                for issue in incomplete:
-                    print('   * {:6} {:10} {}'.format(issue.key, issue.statusName, normalize(issue.summary)))
+            for issue in jira.search_issues('Sprint={} ORDER BY key'.format(sprint.id)):
+                 print('   * {:6} {:11} {}'.format(issue.key, issue.fields.status, normalize(issue.fields.summary)))
             print('')
