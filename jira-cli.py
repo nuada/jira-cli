@@ -8,6 +8,14 @@ from dateutil.parser import parse
 from jira.client import JIRA
 
 
+USAGE = '''usage: jira-cli.py <command>
+
+Commands:
+    * boards              - list all Agile boards
+    * sprints <boadrd_id> - list all sprints and issues for a board
+'''
+
+
 def read(file_path):
     with open(file_path) as f:
         return f.read()
@@ -26,7 +34,9 @@ if __name__ == '__main__':
                 key_cert=read('private_key.pem'))
     jira = JIRA(options=options, oauth=auth)
 
-    if sys.argv[1] == 'boards':
+    if len(sys.argv) == 1:
+        print(USAGE)
+    elif sys.argv[1] == 'boards':
         for board in jira.boards():
             print('{:<5} {}'.format(board.id, board.name))
     elif sys.argv[1] == 'sprints':
