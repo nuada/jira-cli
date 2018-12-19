@@ -47,8 +47,8 @@ if __name__ == '__main__':
             dates = ''
             if sprint.state != 'future':
                 dates = '{:%Y-%m-%d/%H:%M} -> {:%Y-%m-%d/%H:%M}'.format(parse(sprint.startDate),
-                                                                           parse(sprint.endDate))
+                                                                        parse(sprint.endDate))
             print('{} {:36} {}'.format(sprint.state, dates, sprint.name))
             for issue in jira.search_issues('Sprint={} ORDER BY key'.format(sprint.id)):
-                 print('   * {:6} {:11} {}'.format(issue.key, issue.fields.status, normalize(issue.fields.summary)))
+                print('   * {:6} {:11} {}'.format(issue.key, issue.fields.status, normalize(issue.fields.summary)))
             print('')
