@@ -32,11 +32,13 @@ if __name__ == '__main__':
                 access_token_secret=config['access_token_secret'],
                 consumer_key=config['consumer_key'],
                 key_cert=read('private_key.pem'))
-    jira = JIRA(options=options, oauth=auth)
 
     if len(sys.argv) == 1:
         print(USAGE)
-    elif sys.argv[1] == 'boards':
+        exit(1)
+
+    jira = JIRA(options=options, oauth=auth)
+    if sys.argv[1] == 'boards':
         for board in jira.boards():
             print('{:<5} {}'.format(board.id, board.name))
     elif sys.argv[1] == 'sprints':
